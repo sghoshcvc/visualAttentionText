@@ -14,11 +14,11 @@ The path for caffe needs to be provided in the file `` <model\.paths> ``
 
 Executing the following command: 
 
- `` ./eval_memes_v1  <filename> <outputfile> ``
+ `` ./recognize_words_v1 ``
 
-process a single image (`` <filename> ``) and writes to  `` <outputfile> `` the list of recognized words, one per line, with the format: 
+process word images from /image subdirectory, result will be placed in `` <outputfile> `` one per image: 
 
-  `` x,y,w,h,pr, <transcript> ``
+  `` image_file_name, <transcript> ``
 
-where x,y,w,h define a bounding box, pr is the score for the word, and `` <transcription> `` is the recognized word.
+
 
