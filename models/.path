@@ -1,0 +1,9 @@
+caffe_root=/home/sgnosh/caffe/
+image_path=./images/
+protoFile=./models/dictnet_vgg_deploy_conv.prototxt
+modelFileCaffe=./models/dictnet_vgg.caffemodel
+batchSize= 1
+modelFileLSTM=./models/model_v1.0.npz
+dictFile=./models/dictionary.pkl
+paramFile=./models/params.pkl
+useCPU=0
