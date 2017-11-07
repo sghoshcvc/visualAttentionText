@@ -37,13 +37,13 @@ sys.path.insert(0, pathDict['caffe_root'] + 'python')
 import caffe
 
 from skimage.transform import resize as resize
-from skimage import io as imio 
+from skimage import io as imio
 
 from capgen import build_sampler, gen_sample, \
                    load_params, \
                    init_params, \
                   init_tparams
-                  
+
 
 #from multiprocessing import Process, Queue
 def gencap(cc0,f_init,f_next,tparams,trng,options,k,normalize):
@@ -64,7 +64,7 @@ def gen_model(model, options, k, normalize, word_idict, sampling):
     from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 
     trng = RandomStreams(1234)
-    
+
    # DICTIONARY = "lexicon.txt"
     # this is zero indicate we are not using dropout in the graph
     use_noise = theano.shared(numpy.float32(0.), name='use_noise')
@@ -77,7 +77,7 @@ def gen_model(model, options, k, normalize, word_idict, sampling):
     # build the sampling computational graph
     # see capgen.py for more detailed explanations
     f_init, f_next = build_sampler(tparams, options, use_noise, trng, sampling=sampling)
-    
+
 
     return (f_init,f_next,tparams,trng)
 
@@ -87,7 +87,7 @@ def set_up_caffe(protoFile,modelFile,batchSize,useCPU):
     #Setup
     #caffe_root = '/home/sgnosh/caffe/'
 #    sys.path.insert(0, caffe_root + 'python')
-#    import caffe 
+#    import caffe
     print 'Start Setup'
     ##originalImagesPath = 'data/coco/originalImages'
     #trainImagesPath = '/synthText/alvin/dataset/MSCOCO2014/train2014_224/'
@@ -102,7 +102,7 @@ def set_up_caffe(protoFile,modelFile,batchSize,useCPU):
     #experimentPrefix = '.exp4'
     #print 'End Setup'
     #
-    #capDict = pickle.load(open('capdict.pkl','rb'))def _gencap(cc0):    
+    #capDict = pickle.load(open('capdict.pkl','rb'))def _gencap(cc0):
     ##Setup caffe
     #print 'Start Setup caffe'
     if useCPU:
@@ -114,7 +114,7 @@ def set_up_caffe(protoFile,modelFile,batchSize,useCPU):
 #    caffe.set_mode_cpu()
 #    #caffe.set_device(0)
     net = caffe.Net(mjLayoutFilename,mjModelFile,caffe.TEST)
-    
+
 ## input preprocessing: 'data' is the name of the input blob == net.inputs[0]
     transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     net.blobs['data'].reshape(batchSize, 1, 32, 100)
@@ -122,7 +122,7 @@ def set_up_caffe(protoFile,modelFile,batchSize,useCPU):
 
 def read_image(imagePath,filename):
    # for filename in os.listdir(imagePath):
-   
+
    print imagePath+filename
    img =imio.imread(imagePath+filename)
    if len(img.shape) == 3 and img.shape[2] == 3:
@@ -133,7 +133,7 @@ def read_image(imagePath,filename):
    img = (img -np.mean(img)) / ( (np.std(img) + 0.0001)/128 )
    return img
             #net.blobs['data'].data[...] = transformer.preproce931 18 45 31ss('data', img)
-    
+
 # return feature of one batch
     #input: img nd array
     #input : net caffe net object
@@ -148,14 +148,14 @@ def feature_extractor(img,net,transformer):
     reshapeFeat = np.swapaxes(feat,1,3)
     reshapeFeat2 = np.reshape(reshapeFeat,(feat.shape[0],-1))
     return reshapeFeat2
-def main(saveto, k=1, normalize=False, zero_pad=False,sampling=False, pkl_name=None):
+def main(saveto, k=5, normalize=False, zero_pad=False,sampling=False, pkl_name=None):
     # load model model_options
-    
+
     # set paths parameters
    # caffe_root,image_path,protoFile,modelFileCaffe,batchSize,modelFileLSTM,dictFile,paramFile,useCPU = set_param_paths()
     # setting up caffe here ---euracat
 #    sys.path.insert(0, caffe_root + 'python')
-#    import caffe 
+#    import caffe
     batchSize= int(pathDict['batchSize'])
     net,transformer =set_up_caffe(pathDict['protoFile'],pathDict['modelFileCaffe'],batchSize,int(pathDict['useCPU']))
 
@@ -165,7 +165,7 @@ def main(saveto, k=1, normalize=False, zero_pad=False,sampling=False, pkl_name=N
         paramFile = pathDict['paramFile']
     with open('%s'% paramFile, 'rb') as f:
         options = pkl.load(f)
-    
+
 
     with open(pathDict['dictFile'], 'rb') as f:
         worddict = pkl.load(f)
@@ -178,6 +178,7 @@ def main(saveto, k=1, normalize=False, zero_pad=False,sampling=False, pkl_name=N
     f_init,f_next,tparams,trng = gen_model(pathDict['modelFileLSTM'], options, k, normalize, word_idict, sampling)
     # generates words using dictionary
     def _seqs2words(caps):
+            #print caps
             capsw = []
             for cc in caps:
                 capW = []
@@ -189,12 +190,12 @@ def main(saveto, k=1, normalize=False, zero_pad=False,sampling=False, pkl_name=N
                         ww.append(word_idict[w])
                     capW.append(''.join(ww))
                 capsw.append(' '.join(capW))
-                
-            return capsw    
-    
+
+            return capsw
+
     # read the proposals
     #proposals = pd.read_table(pathDict['image_path']+image_name.replace('.jpg','.txt'), sep=' ', header=None,names=['x', 'y','w','h','prob'])
-    
+
     #nProposals =proposals.shape[0]
     # for every proposal do the following
     #bbox = np.empty([4,nProposals])
@@ -203,22 +204,22 @@ def main(saveto, k=1, normalize=False, zero_pad=False,sampling=False, pkl_name=N
 #    bbox[1]=propsals['y'].values
 #    bbox[2]=proposals['w'].values
 #    bbox[3]=proposals['h'].values
-#    
-    
+#
+
     img_names = os.listdir(pathDict['image_path'])
     imgs = [read_image(pathDict['image_path'],filename) for filename in img_names]
     nProposals = len(imgs)
     caps = [None] * nProposals
     probs = [None] * nProposals
-   
-    
-    
-     # for each batch do the followinng
-    
+
+
+
+     # for each batch do the folmainlowinng
+
     #imgs = np.array(imgs)
     #imgs = imgs.reshape(batchSize,1,32,100)
     startime = time.clock()
-    
+
     for start in range(0,nProposals,batchSize):
         for idx in range(start,min(start+batchSize,nProposals)):
             net.blobs['data'].data[idx-start] = transformer.preprocess('data', imgs[idx])
@@ -231,30 +232,34 @@ def main(saveto, k=1, normalize=False, zero_pad=False,sampling=False, pkl_name=N
         ctx = np.reshape(reshapeFeat,(feat.shape[0],-1))
         # for last iteration discard the last rows
         if start+batchSize > nProposals:
-            ctx = ctx[0:nProposals-start,:]        
-        
+            ctx = ctx[0:nProposals-start,:]
+
         for idx in range(ctx.shape[0]):
-            # calculate feature for every proposal here 
-            
+            # calculate feature for every proposal here
+
             #imName = '=sample1.jpg'
             #st = time.clock()
            # img = read_image(image_path,image_name,bbox[idx,:-1])
-            
-            
+
+
             cc = (ctx[idx]).reshape([4*13,512]) # as per the input feature size
-            
+
             if zero_pad:
                         cc0 = numpy.zeros((cc.shape[0]+1, cc.shape[1])).astype('float32')
                         cc0[:-1,:] = cc
             else:
                         cc0 = cc
             resp=gencap(cc0,f_init,f_next,tparams,trng,options,k,normalize)
+            #print resp
             # if more than one output needed change here
-            resp_cap,prob=resp[0]
-            caps[start+idx] = [resp_cap]
+            resp_cap=[ r for (r,p) in resp]
+            prob=[ p for (r,p) in resp]
+            #print resp_cap
+            caps[start+idx] = resp_cap
             probs[start+idx] =prob
            # end = time.clock()
             #print end-st
+    #print caps
     textResult = _seqs2words(caps)
         # save it in a file
     results =np.column_stack([img_names,textResult])
@@ -265,6 +270,7 @@ def main(saveto, k=1, normalize=False, zero_pad=False,sampling=False, pkl_name=N
 #    for i,x in enumerate(textResult):
 #        res.write(bbox[i]+x+'\n')
 #    res.close()
+    #print results
     np.savetxt(saveto,results,fmt='%s')
     #np.savetxt(image_name.replace('_img.jpg','_res.txt'),results,fmt='%s,%s,%s,%s,%s,%s')
     end = time.clock()
@@ -278,10 +284,14 @@ if __name__ == "__main__":
    # parser.add_argument('-image_name', type=str,default = '46_img.jpg')
 
     parser.add_argument('-saveto', type=str,default='result.txt')
- 
+
 
     args = parser.parse_args()
- 
-    main(args.saveto)
+    parser.add_argument('-k', type=int,default=5)
+
+
+    args = parser.parse_args()
+
+    main(args.saveto,args.k)
     #print status
 #synthText_deterministic_model.exp9.npz_epoch_10
