@@ -1,4 +1,4 @@
-models/model_v1.0.npz
+#models/model_v1.0.npz
 models/dictnet_vgg.caffemodel
 images/46_img.jpg
 models/fcn8s-atonce_deploy.prototxt
