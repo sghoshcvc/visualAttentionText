@@ -1,2 +1,2 @@
-46_img.jpg contractions contraction controversial constructions contemplative
-scenetext_word02.jpg here herie rere hare heres
+46_img.jpg  ('contractions', 0.00013297286833978606), ('contraction', 0.00010873908536334454), ('controversial', 9.6117060107170558e-05), ('constructions', 5.0893876981307827e-05), ('contemplative', 5.0334056044113391e-05)
+scenetext_word02.jpg  ('here', 0.99948814780615092), ('herie', 7.0357839050783595e-05), ('rere', 5.7955031764387585e-05), ('hare', 2.9211293433306765e-05), ('heres', 2.7866966121087069e-05)

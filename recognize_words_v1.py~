@@ -253,34 +253,16 @@ def main(saveto, k=5, normalize=False, zero_pad=False,sampling=False, pkl_name=N
             #print resp
             # if more than one output needed change here
             resp_cap=[ r for (r,p) in resp]
-            prob=[ numpy.exp(p*-1) for (r,p) in resp]
+            prob=[ p for (r,p) in resp]
             #print resp_cap
             caps[start+idx] = resp_cap
             probs[start+idx] =prob
-            #print probs
            # end = time.clock()
             #print end-st
     #print caps
     textResult = _seqs2words(caps)
-    #print len(probs)
-    #print probs
-    #print len(textResult)
-    #textResultProb = zip(textResult,probs)
-    textResultProb=[]
-    fw = open(saveto,'w')
-    for i,wds in enumerate(textResult):
-        #print type(wds)
-        wds=wds.split()
-        print zip(wds,probs[i])
-        line = img_names[i]+'  '+str(zip(wds,probs[i])).strip('[]')+'\n'
-        fw.write(line)
-
-        #print textResultProb
-
         # save it in a file
-    #print img_names
-    fw.close()
-    #results =np.column_stack([img_names,textResultProb])
+    results =np.column_stack([img_names,textResult])
 #    if saveto is None:
 #        res = open(image_name.replace('_img.jpg','_res.txt','w'))
 #    else:
@@ -289,7 +271,7 @@ def main(saveto, k=5, normalize=False, zero_pad=False,sampling=False, pkl_name=N
 #        res.write(bbox[i]+x+'\n')
 #    res.close()
     #print results
-    #np.savetxt(saveto,results,fmt='%s')
+    np.savetxt(saveto,results,fmt='%s')
     #np.savetxt(image_name.replace('_img.jpg','_res.txt'),results,fmt='%s,%s,%s,%s,%s,%s')
     end = time.clock()
     print end-startime
